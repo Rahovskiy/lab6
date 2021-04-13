@@ -1,5 +1,6 @@
 package bsu.rfe.java.group7.lab4.Rahovskiy.varA8;
 
+
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -9,14 +10,15 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-@SuppressWarnings("serial")
-public class MainFrame extends JFrame {
-    // Константы, задающие размер окна приложения, если оно
-// не распахнуто на весь экран
+public class MainFrame extends JFrame{
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
     private JMenuItem pauseMenuItem;
     private JMenuItem resumeMenuItem;
+    private JMenuItem pauseMenuFastItem;
+    private JMenuItem pauseMenuBigItem;
+    private JMenuItem pauseMenuLittleItem;
+
     // Поле, по которому прыгают мячи
     private Field field = new Field();
     // Конструктор главного окна приложения
@@ -24,29 +26,49 @@ public class MainFrame extends JFrame {
         super("Программирование и синхронизация потоков");
         setSize(WIDTH, HEIGHT);
         Toolkit kit = Toolkit.getDefaultToolkit();
-// Отцентрировать окно приложения на экране
+        // Отцентрировать окно приложения на экране
         setLocation((kit.getScreenSize().width - WIDTH)/2,
                 (kit.getScreenSize().height - HEIGHT)/2);
-// Установить начальное состояние окна развѐрнутым на весь экран
-
+        // Устанавливаем окно развёрнутым на весь экран
         setExtendedState(MAXIMIZED_BOTH);
-// Создать меню
+        //меню
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         JMenu ballMenu = new JMenu("Мячи");
         Action addBallAction = new AbstractAction("Добавить мяч") {
             public void actionPerformed(ActionEvent event) {
                 field.addBall();
-                if (!pauseMenuItem.isEnabled() &&
-                        !resumeMenuItem.isEnabled()) {
-// Ни один из пунктов меню не являются
-// доступными - сделать доступным "Паузу"
+                if (!pauseMenuItem.isEnabled() && !resumeMenuItem.isEnabled()
+                        && !pauseMenuFastItem.isEnabled()) {
+                    // Ни один из пунктов меню не являются
+                    // доступными, сделать доступным паузу и паузу быстрых мячей доступными
                     pauseMenuItem.setEnabled(true);
+                    pauseMenuFastItem.setEnabled(true);
+                    pauseMenuBigItem.setEnabled(true);
+                    pauseMenuLittleItem.setEnabled(true);
+
+                }
+            }
+        };
+
+        Action addThreeBallAction = new AbstractAction("Добавить 3 мяча") {
+            public void actionPerformed(ActionEvent event) {
+                field.addThreeBalls();
+                if (!pauseMenuItem.isEnabled() && !resumeMenuItem.isEnabled()
+                        && !pauseMenuFastItem.isEnabled()) {
+                    // Ни один из пунктов меню не являются
+                    // доступными, сделать доступным паузу и паузу быстрых мячей доступными
+                    pauseMenuItem.setEnabled(true);
+                    pauseMenuFastItem.setEnabled(true);
+                    pauseMenuBigItem.setEnabled(true);
+                    pauseMenuLittleItem.setEnabled(true);
+
                 }
             }
         };
         menuBar.add(ballMenu);
         ballMenu.add(addBallAction);
+        ballMenu.add(addThreeBallAction);
         JMenu controlMenu = new JMenu("Управление");
         menuBar.add(controlMenu);
         Action pauseAction = new AbstractAction("Приостановить движение"){
@@ -54,6 +76,9 @@ public class MainFrame extends JFrame {
                 field.pause();
                 pauseMenuItem.setEnabled(false);
                 resumeMenuItem.setEnabled(true);
+                pauseMenuFastItem.setEnabled(false);
+                pauseMenuBigItem.setEnabled(false);
+                pauseMenuLittleItem.setEnabled(false);
             }
         };
         pauseMenuItem = controlMenu.add(pauseAction);
@@ -63,14 +88,55 @@ public class MainFrame extends JFrame {
                 field.resume();
                 pauseMenuItem.setEnabled(true);
                 resumeMenuItem.setEnabled(false);
+                pauseMenuFastItem.setEnabled(true);
+                pauseMenuBigItem.setEnabled(true);
+                pauseMenuLittleItem.setEnabled(true);
             }
         };
         resumeMenuItem = controlMenu.add(resumeAction);
         resumeMenuItem.setEnabled(false);
-// Добавить в центр граничной компоновки поле Field
+        Action pauseFastAction = new AbstractAction("Приостановить быстрые мячи") {
+            public void actionPerformed(ActionEvent event) {
+                field.pauseFast();
+                pauseMenuItem.setEnabled(true);
+                resumeMenuItem.setEnabled(true);
+                pauseMenuFastItem.setEnabled(false);
+                pauseMenuBigItem.setEnabled(true);
+                pauseMenuLittleItem.setEnabled(true);
+            }
+        };
+        pauseMenuFastItem = controlMenu.add(pauseFastAction);
+        pauseMenuFastItem.setEnabled(false);
+
+        Action pauseBigAction = new AbstractAction("Приостановить большие мячи") {
+            public void actionPerformed(ActionEvent event) {
+                field.pauseBig();
+                pauseMenuItem.setEnabled(true);
+                resumeMenuItem.setEnabled(true);
+                pauseMenuFastItem.setEnabled(true);
+                pauseMenuBigItem.setEnabled(false);
+                pauseMenuLittleItem.setEnabled(true);
+            }
+        };
+        pauseMenuBigItem = controlMenu.add(pauseBigAction);
+        pauseMenuBigItem.setEnabled(false);
+
+        Action pauseLittleAction = new AbstractAction("Приостановить маленькие мячи") {
+            public void actionPerformed(ActionEvent event) {
+                field.pauseLittle();
+                pauseMenuItem.setEnabled(true);
+                resumeMenuItem.setEnabled(true);
+                pauseMenuFastItem.setEnabled(true);
+                pauseMenuBigItem.setEnabled(true);
+                pauseMenuLittleItem.setEnabled(false);
+            }
+        };
+        pauseMenuLittleItem = controlMenu.add(pauseLittleAction);
+        pauseMenuLittleItem.setEnabled(false);
+
+        // Добавить в центр граничной компоновки поле Field
         getContentPane().add(field, BorderLayout.CENTER);
     }
-    // Главный метод приложения
     public static void main(String[] args) {
 // Создать и сделать видимым главное окно приложения
         MainFrame frame = new MainFrame();

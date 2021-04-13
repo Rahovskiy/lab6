@@ -22,84 +22,78 @@ public class BouncingBall implements Runnable {
     private double speedY;
     // Конструктор класса BouncingBall
     public BouncingBall(Field field) {
-// Необходимо иметь ссылку на поле, по которому прыгает мяч,
-// чтобы отслеживать выход за его пределы
-
-// через getWidth(), getHeight()
+        // Необходимо иметь ссылку на поле, по которому прыгает мяч,
+        // чтобы отслеживать выход за его пределы
+        // через getWidth(), getHeight()
         this.field = field;
-// Радиус мяча случайного размера
+        // Радиус мяча случайного размера
         radius = new Double(Math.random()*(MAX_RADIUS -
                 MIN_RADIUS)).intValue() + MIN_RADIUS;
-// Абсолютное значение скорости зависит от диаметра мяча,
-// чем он больше, тем медленнее
-        speed = new Double(Math.round(5*MAX_SPEED / radius)).intValue();
+        speed = new Double(Math.round(5 * MAX_SPEED / radius)).intValue();
         if (speed>MAX_SPEED) {
             speed = MAX_SPEED;
         }
-// Начальное направление скорости тоже случайно,
-// угол в пределах от 0 до 2PI
+        // Начальное направление скорости тоже случайно,
+        // угол в пределах от 0 до 2PI
         double angle = Math.random()*2*Math.PI;
-// Вычисляются горизонтальная и вертикальная компоненты скорости
+        // Вычисляются горизонтальная и вертикальная компоненты скорости
         speedX = 3*Math.cos(angle);
         speedY = 3*Math.sin(angle);
-// Цвет мяча выбирается случайно
-        color = new Color((float)Math.random(), (float)Math.random(),
-                (float)Math.random());
-// Начальное положение мяча случайно
+        // Цвет мяча выбирается случайно
+        color = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
+        // Начальное положение мяча случайно
         x = Math.random()*(field.getSize().getWidth()-2*radius) + radius;
         y = Math.random()*(field.getSize().getHeight()-2*radius) + radius;
-// Создаѐм новый экземпляр потока, передавая аргументом
-// ссылку на класс, реализующий Runnable (т.е. на себя)
+        // Создаѐм новый экземпляр потока, передавая аргументом
+        // ссылку на класс, реализующий Runnable (т.е. на себя)
         Thread thisThread = new Thread(this);
-// Запускаем поток
+        //запускаем поток
         thisThread.start();
     }
-    // Метод run() исполняется внутри потока. Когда он завершает работу,
-// то завершается и поток
+    // Метод run() исполняется внутри потока. Когда он завершает работу, то завершается и поток
     public void run() {
         try {
-// Крутим бесконечный цикл, т.е. пока нас не прервут,
-// мы не намерены завершаться
+            // Крутим бесконечный цикл, т.е. пока нас не прервут,
+            // мы не намерены завершаться
             while(true) {
-// Синхронизация потоков на самом объекте поля
-// Если движение разрешено - управление будет
-// возвращено в метод
-// В противном случае - активный поток заснѐт
+                // Синхронизация потоков на самом объекте поля
+                // Если движение разрешено - управление будет
+                // возвращено в метод
+                // В противном случае - активный поток заснёт
                 field.canMove(this);
                 if (x + speedX <= radius) {
-// Достигли левой стенки, отскакиваем право
+                    // Достигли левой стенки, отскакиваем право
                     speedX = -speedX;
                     x = radius;
                 } else
                 if (x + speedX >= field.getWidth() - radius) {
-// Достигли правой стенки, отскок влево
+                    // Достигли правой стенки, отскок влево
                     speedX = -speedX;
                     x=new Double(field.getWidth()-radius).intValue();
                 } else
                 if (y + speedY <= radius) {
-// Достигли верхней стенки
+                    // Достигли верхней стенки
                     speedY = -speedY;
                     y = radius;
                 } else
                 if (y + speedY >= field.getHeight() - radius) {
-// Достигли нижней стенки
+                    // Достигли нижней стенки
                     speedY = -speedY;
                     y=new Double(field.getHeight()-radius).intValue();
                 } else {
-// Просто смещаемся
+                    // Просто смещаемся
                     x += speedX;
-
                     y += speedY;
                 }
-// Засыпаем на X миллисекунд, где X определяется
-// исходя из скорости
-// Скорость = 1 (медленно), засыпаем на 15 мс.
-// Скорость = 15 (быстро), засыпаем на 1 мс.
+                // Засыпаем на X миллисекунд, где X определяется
+                // исходя из скорости
+                // Скорость = 1 (медленно), засыпаем на 15 мс.
+                // Скорость = 15 (быстро), засыпаем на 1 мс.
                 Thread.sleep(16-speed);
             }
         } catch (InterruptedException ex) {
-// Если нас прервали, то ничего не делаем
-// и просто выходим (завершаемся)
+            // Если нас прервали, то ничего не делаем
+            // и просто выходим (завершаемся)
         }
     }
     // Метод прорисовки самого себя
@@ -111,4 +105,8 @@ public class BouncingBall implements Runnable {
         canvas.draw(ball);
         canvas.fill(ball);
     }
+    public int getSpeed(){
+        return speed;
+    }
+    public int getRadius() { return radius; }
 }
